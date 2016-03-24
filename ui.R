@@ -41,18 +41,19 @@ shinyUI(fluidPage(
     br(),
            h2("How to use this application for specific analyses"),
                      h4("Comparing two means (like in an independent samples t-test) "),
-                     p("Simply specify the dichotomous grouping variable as the IV, with dummy coding such that 
-        one group is coded as 0 and the other as 1. The coefficient for the group variable indicates the mean difference."),
+                     p("Specify the dichotomous grouping variable as the IV, and specify it as a nominal variable. 
+                       In the output, the intercept is the mean in group 1, and the coefficient/slope for the group variable
+                       is the mean difference."),
                      h4("Comparing more than two means (like in ANOVA)"),
-                     p("Create K-1 dummy variables, where K is the number of groups. Specify each of the dummy variables as an IV.
-        The coefficient for each dummy variable indicates the mean difference between the group that variable refers to
-        and the reference group"),
+                     p("Specify the grouping variable as the IV and select this as a nominal variable.
+                       The coefficient for each level of the group is the mean for that group."),
                      h4("Correlation"),
-                     p("Convert the two variables to z scores, save the z scores in the .csv file, and then upload it. You can
-        now  specify one variable as the IV, and the other as the DV (it doesn't matter which way round).
-        The coefficient for the 'IV' is   the correlation."),
-                     h4("Logistic regression"),
+                     p("Specify one variable as the predictor variable, and one as the response (it doesn't matter which
+                       way round. Click analyse. The 'std.coef' value for the independent variable is the correlation."),
+                     h4("Binomial logistic regression"),
                      p("Ensure that your dependent variable only has values of 0 or 1. Select the binomial logistic regression option."),
+    h4("Multinomial logistic regression"),
+    p("Ensure that your dependent variable only has integer values. Select the binomial logistic regression option."),
     h4("Poisson regression"),
     p("Ensure that your dependent variable only has integer values of 0 o greater. Select the Poisson regression option."),                 
     h4("Support for repeated measures"),
@@ -114,7 +115,7 @@ shinyUI(fluidPage(
                  code("IV1*IV2 + IV3*IV4")),
       selectInput("factors", "Are any of your variables nominal?", "", multiple = TRUE),
       br(),
-      h4("Priors"),
+      h4("Priors (editable table)"),
       p("Parameter", "Prior mean", "Prior variance"),
       uiOutput("matrix"),        
       actionButton("analysis","Analyze!"),    

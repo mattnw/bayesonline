@@ -1,8 +1,7 @@
 #Code to run once when app is launched only
+library(MCMCpack)
 
-std.fun = function(x){
-  (x-mean(x, na.rm = TRUE)/sd(x, na.rm = TRUE))
-}
+#Code to take a term in a string version of a formula and treat it as a factor
 
 #Code to run for each new visitor
 #A code snippet within a render* or reactive function is run each time 
@@ -49,18 +48,23 @@ observe({
 observe({
   updateSelectInput( 
     session,
-    inputId = "z",
+    inputId = "factors",
     choices=c(input$IVs,input$DV))
 })
 
 mod.form = reactive({
-  paste(input$DV, " ~ ", paste(input$IVs, sep = "", collapse = " + "), interactions())
-})
+  IVsfactorised <- sapply(input$IVs, function(IV){
+    if (IV %in% input$factors) {paste("as.factor(", IV, ")", sep = "")}
+    else {IV}
+  })
+  DVfactorised <- if (input$DV %in% input$factors) {paste("as.factor(", input$DV, ")", sep = "")} else input$DV
+  paste(DVfactorised, " ~ ", paste(IVsfactorised, sep = "", collapse = " + "), interactions())
+  })
 
-terms = reactive({
-  names(lm(formula(mod.form()), data = head(myData()))$coefficients)})
+terms = reactive({ #Got to be a way to do this without fitting the model (but perhaps who cares given the MCMC iterations?)
+  names(lm(formula(mod.form()), data = myData())$coefficients)})
 
-df = reactive({
+df = reactive({ 
   if (is.null(input$IVs) & (input$interacts == "")){
     return(data.frame(ModelTerms = c("None"), PriorMeans = c(0), PriorPrecisions = c(0)))}
   else {data.frame(ModelTerms = terms(), PriorMeans = rep(0, times = length(terms())),
@@ -80,14 +84,20 @@ observeEvent(input$analysis, {
   else if (input$family == "Binomial logistic regression")
     {model = MCMClogit(formula(mod.form()), data = myData(), b0 = b0(), B0 = B0())}
   else if (input$family == "Multinomial logistic regression")
-    {model = MCMCmnl(formula(mod.form()), data = useData(), b0 = b0(), B0 = B0())}
+    {model = MCMCmnl(formula(mod.form()), data = myData(), b0 = b0(), B0 = B0())}
   else {model = MCMCpoisson(formula(mod.form()), data = myData(), b0 = b0(), B0 = B0())}
   
   output$modelSummary <- renderTable({
     data.frame(Coefficient = rownames(summary(model)$quantiles),
                             Mean = as.numeric(summary(model)$statistics[,1]),
                             "Percentile2.5" = as.numeric(summary(model)$quantiles[,1]),
-                            "Percentile95" = as.numeric(summary(model)$quantiles[,5]))
+                            "Percentile95" = as.numeric(summary(model)$quantiles[,5]),
+               std.coefs = as.numeric(summary(model)$statistics[,1])*(sapply(X = rownames(summary(model)$quantiles), FUN = function(X){
+                 if (X %in% colnames(myData()))
+                 sd(myData()[,paste(X)], na.rm = TRUE)
+               else NA})/sd(myData()[,paste(input$DV)], na.rm = TRUE))
+    )
+               
   }, digits = 3)
   output$plots <- renderPlot({
     plot(model)

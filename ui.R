@@ -116,7 +116,7 @@ shinyUI(fluidPage(
       selectInput("factors", "Are any of your variables nominal?", "", multiple = TRUE),
       br(),
       h4("Priors (editable table)"),
-      p("Parameter", "Prior mean", "Prior variance"),
+      p("Parameter", "Prior mean", "Prior precision"),
       uiOutput("matrix"),        
       actionButton("analysis","Analyze!"),    
     br(),

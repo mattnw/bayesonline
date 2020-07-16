@@ -48,6 +48,13 @@ observe({
 observe({
   updateSelectInput( 
     session,
+    inputId = "IDgroup",
+    choices=c("", names(myData())) )
+})
+
+observe({
+  updateSelectInput( 
+    session,
     inputId = "factors",
     choices=c(input$IVs,input$DV))
 })

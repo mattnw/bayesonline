@@ -8,13 +8,13 @@ shinyUI(fluidPage(
            
       h2("Introduction"),
         p("This page allows you to perform Bayesian versions of several of the most commonly used
-        data analyses in the social sciences. Bayesian analyses have a number of advantages over
-        null hypothesis significance tests. Perhaps the most important advantage is that Bayesian
-        tests", em("tell us what we want to know."), "Whereas a p value is statistic with a horrible
-        interpretation (the probability of obtaining a test statistic as
+        data analyses in the social sciences. Bayesian analyses have some advantages over
+        null hypothesis significance tests. One advantage is that Bayesian
+        tests", em("tell us what we want to know."), "Whereas a p value is a statistic with a relatively 
+        counterintuitive interpretation (the probability of obtaining a test statistic as
         or more extreme than that observed if the null hypothesis is true), Bayesian analyses give us
-        direct and intuitive results. For example, as you'll see on this page, you can very easily
-        calculate the actual probability that a particular hypothesis is true!"),
+        more intuitive information about uncertainty For example, as you'll see on this page, you can
+        calculate the probability that a particular hypothesis is true - conditional on the priors and data."),
       p("Historically, Bayesian analyses have been hard to do for computing reasons, but modern computer
         processors make them a lot more feasible in real research settings. That said, most true Bayesian
         analyses currently require users to be able to use computer code to run them. That's fine for some
@@ -25,17 +25,20 @@ shinyUI(fluidPage(
       h3("Priors"),
       p("In a Bayesian analysis, we have to specify ahead of time what knowledge we have about the probable
         values of the parameters. I.e.., ", em("before"), "looking at the data, what do we know about what
-        the true value of the slopes and intercept parameters (in the population)? In some cases, we might
+        the true value of the slopes and intercept parameters in the population? In some cases, we might
         wish to pretend we knew nothing ahead of time and specify what are called ", em("uninformative"),
         "priors."),
       p("This is what is assumed by default in this application: The default priors for the model
         parameters (e.g., intercept and slopes) have mean zero and infinite variance. This represents a state
-        of absolute ignorance before seeing the data: I.e., an assumption that absolutely any value of the
+        of  ignorance before seeing the data: I.e., an assumption that absolutely any value of the
         parameters (from negative infinity to positive infinity) is equally likely. If you know a bit about
-        Bayesian analysis, you may instead wish to specify ", em("informative priors"), "that clearly
-        specify what prior knowledge you have (e.g., that small effects are more likely than large ones. 
-        The shape of the prior distribution for the slopes and intercepts is assumed to have a normal distribution
-        shape."),
+        Bayesian analysis, you may instead wish to specify", em("informative priors"), "that specify what prior knowledge 
+        you have (e.g., that small effects are more likely than large ones). 
+        Another way of looking at this is that the priors embody", em("assumptions"), "you are willing to make about which
+        parameter values are more likely than others."),
+      p("In this app, the shape of the prior distribution for the slopes and intercepts is assumed to be that of
+        the normal distribution You can specify both a different prior mean (indicating what is known about the most probable
+        value of the parameter) as well as a prior precision (the reciprocal of the variance, i.e., 1/variance)."),
       
     
     br(),
@@ -113,6 +116,8 @@ shinyUI(fluidPage(
               textInput("interacts", "Specify any interaction terms"),
               helpText("Specify interaction terms in the format",
                  code("IV1*IV2 + IV3*IV4")),
+      #selectInput("IDgroup", "If you have repeated measures, specify the variable indicating records
+      #from the same unit (e.g., an 'id' variable)", ""),
       selectInput("factors", "Are any of your variables nominal?", "", multiple = TRUE),
       br(),
       h4("Priors (editable table)"),
